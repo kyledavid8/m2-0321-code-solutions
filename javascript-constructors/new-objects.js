@@ -6,10 +6,9 @@ var anArray = new Array();
 console.log('value of anArray:', anArray);
 console.log('typeof anArray:', typeof anArray);
 
-console.log('value of aFunction:', function() {
-
-});
-console.log('typeof aFunction:', typeof function() {});
+var aFunction = new Function();
+console.log('value of aFunction:', aFunction)
+console.log('typeof aFunction:', typeof aFunction);
 
 var aNumber = new Number();
 console.log('value of aNumber:', aNumber);
