@@ -10,7 +10,6 @@ Account.prototype.deposit = function(amount) {
     this.transactions.push(new Transaction('deposit', amount));
     return true;
   } else {
-    this.transactions.push(new Transaction('deposit', 0));
     return false;
   }
 }
@@ -20,7 +19,6 @@ Account.prototype.withdraw = function(amount) {
     this.transactions.push(new Transaction('withdraw', amount));
     return true;
   } else {
-    this.transactions.push(new Transaction('withdraw', 0));
     return false;
   }
 }

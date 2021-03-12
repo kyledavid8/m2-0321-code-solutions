@@ -1,16 +1,16 @@
 /* exported Bank */
 function Bank() {
-this.nextAccountNumber = 1;
-this.accounts = [];
+  this.nextAccountNumber = 1;
+  this.accounts = [];
 };
 
 Bank.prototype.openAccount = function(holder, balance) {
   if (balance > 0) {
    var obj = new Account(this.nextAccountNumber, holder);
-   obj.deposit(balance);
-   this.accounts.push(obj);
-   this.nextAccountNumber++;
-   return this.nextAccountNumber - 1;
+    obj.deposit(balance);
+    this.accounts.push(obj);
+    this.nextAccountNumber++;
+    return this.nextAccountNumber - 1;
   } else {
     return null;
   }
