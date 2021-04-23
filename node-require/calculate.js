@@ -3,10 +3,10 @@ const subtract = require('./subtract');
 const divide = require('./divide');
 const multiply = require('./multiply');
 
-const split = process.argv[2].split(' ');
-let x = parseInt(split[0]);
-let y = parseInt(split[2]);
-let exp = split[1];
+const split = process.argv
+let x = split[2];
+let y = split[4];
+let exp = split[3];
 
 if (exp === 'plus') {
   var answer = add(x, y);
