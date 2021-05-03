@@ -32,15 +32,21 @@ app.get('/api/grades', (req, res) => {
 app.delete('/api/grades/:id', (req, res) => {
   const keysArray = Object.keys(grades);
   let i = 0;
-  for(const property in grades) {
-    if(req.params.id === keysArray[i]) {
+  let x = 0;
+
+  for (const property in grades) {
+    if (req.params.id === keysArray[i]) {
       delete grades[property];
-      res.sendStatus(204)
+      res.sendStatus(204);
+      x++;
       break;
     } else {
       i++;
     }
   }
+  if(x === 0) {
+    res.sendStatus(404);
+  }
 })
 
-app.listen(3000, console.log('Listening on port 300!'));
+app.listen(3000, console.log('Listening on port 3000!'));
