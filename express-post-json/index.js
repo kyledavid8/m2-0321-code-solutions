@@ -14,15 +14,15 @@ app.get('/api/grades', (req, res) => {
     })
   }
   res.json(gradesArray);
-})
+});
 
-app.use(express.json())
+app.use(express.json());
 
 app.post('/api/grades', (req, res) => {
   grades[nextId] = req.body;
   grades[nextId].id = nextId;
   res.status(201).send(grades[nextId]);
   nextId++;
-})
+});
 
-app.listen(3000, () => console.log('Listening on port 3000!'))
+app.listen(3000, () => console.log('Listening on port 3000!!'));
