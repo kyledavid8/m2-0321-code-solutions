@@ -3,7 +3,6 @@ const app = express();
 const fs = require('fs');
 
 app.get('/api/notes', (req, res) => {
-  const gradesArray = [];
   fs.readFile('data.json', 'utf8', (err, data) => {
     data = JSON.parse(data);
     const objArray = [];
@@ -18,8 +17,7 @@ app.get('/api/notes', (req, res) => {
 });
 
 app.get('/api/notes/:id', (req, res) => {
-  if(req.params.id <= 0) {
-    console.log('gang gang')
+  if(req.params.id <= 0 || typeof req.params.id !== Number || (req.params.id % 1) !== 0) {
     res.status(400)
     res.json({"error": "id must be a positive integer"})
   } else {
@@ -85,7 +83,7 @@ app.post('/api/notes', (req, res) => {
 });
 
 app.delete('/api/notes/:id', (req, res) => {
-  if(req.params.id <= 0) {
+  if (req.params.id <= 0 || typeof req.params.id !== Number || (req.params.id % 1) !== 0) {
     res.status(400);
     res.json({
       "error": "id must be a positive integer"
@@ -121,7 +119,7 @@ app.delete('/api/notes/:id', (req, res) => {
 });
 
 app.put('/api/notes/:id', (req, res) => {
-  if(req.params.id <= 0 || req.body.content === undefined) {
+  if (req.params.id <= 0 || req.body.content === undefined || typeof req.params.id !== Number || (req.params.id % 1) !== 0) {
     res.status(400);
     res.json({
       "error": "id must be a positive integer"
