@@ -27,7 +27,8 @@ app.get('/api/grades', (req, res) => {
 app.use(express.json())
 
 app.post('/api/grades', (req, res) => {
-  if(req.body.name === undefined || req.body.course === undefined || req.body.score === undefined || req.body.score < 1 || req.body.score > 100) {
+  if(req.body.name === undefined || req.body.course === undefined || req.body.score === undefined
+    || req.body.score < 1 || req.body.score > 100 || !Number.isInteger(parseInt(req.body.score))) {
     res.status(400).json({
       error: 'Something is wrong with your request parameters'
     })
@@ -35,22 +36,12 @@ app.post('/api/grades', (req, res) => {
   }
   const text = `
   INSERT INTO grades (name, course, score)
-    VALUES($1, $2, $3)`
+    VALUES($1, $2, $3)
+    RETURNING *`
   const values = [req.body.name, req.body.course, req.body.score]
   db.query(text, values)
   .then((result) => {
-    const sql = `
-    select *
-      from "grades"`;
-    db.query(sql)
-    .then((result) => {
-      res.status(201).json(result.rows[result.rows.length - 1])
-    })
-    .catch((err) => {
-      res.status(500).json({
-        error: 'Something went wrong retrieving newly created grade'
-      })
-    })
+    res.status(201).json(result.rows)
   })
   .catch((err) => {
     res.status(500).json({
@@ -62,42 +53,43 @@ app.post('/api/grades', (req, res) => {
 app.put('/api/grades/:gradeId', (req, res) => {
   const gradeId = parseInt(req.params.gradeId)
   if (!Number.isInteger(gradeId) || gradeId <= 0 || req.body.name === undefined || req.body.course === undefined
-    || req.body.score === undefined || req.body.score < 1 || req.body.score > 100) {
+    || req.body.score === undefined || req.body.score < 1 || req.body.score > 100 || !Number.isInteger(parseInt(req.body.score))) {
       res.status(400).json({
         error: 'Something is wrong with your request'
       })
-      console.log(gradeId)
       return;
   }
-  const text = `UPDATE grades
-                  SET name = $1, course = $2, score = $3
-                  WHERE "gradeId" = $4`
-  const values = [req.body.name, req.body.course, req.body.score, gradeId];
-  db.query(text, values)
-  .then((result) => {
-    const sql = `
+
+  const sql = `
     select *
       from "grades"`;
-    db.query(sql)
-      .then((result) => {
-        for(let i = 0; result.rows.length >= i; i++) {
-          if(result.rows[i].gradeId === gradeId) {
-            res.status(201).json(result.rows[i])
-            break;
-          }
+  db.query(sql)
+    .then((result) => {
+      for (let i = 0; result.rows.length >= i; i++) {
+        if (result.rows[i].gradeId === gradeId) {
+          const text = `UPDATE grades
+                  SET name = $1, course = $2, score = $3
+                  WHERE "gradeId" = $4
+                  RETURNING *`
+          const values = [req.body.name, req.body.course, req.body.score, gradeId];
+          db.query(text, values)
+            .then((result) => {
+              res.status(201).json(result.rows)
+            })
+          return;
+        } else if (i === result.rows.length - 1) {
+          res.status(404).json({
+            error: `gradeId ${gradeId} does not exist`
+          })
+          return;
         }
-      })
-      .catch((err) => {
-        res.status(404).json({
-          error: `gradeId ${gradeId} does not exist`
-        })
-      })
-  })
-  .catch((err) => {
-    res.status(500).json({
-      error: "something went wrong querying the database"
+      }
     })
-  })
+    .catch((err) => {
+      res.status(500).json({
+        error: "something went wrong"
+      })
+    })
 })
 
 app.delete('/api/grades/:gradeId', (req, res, err) => {
@@ -121,7 +113,6 @@ app.delete('/api/grades/:gradeId', (req, res, err) => {
           const values = [gradeId]
           db.query(text, values)
             .then((result) => {
-              console.log('204')
               res.status(204).json();
             })
             .catch((err) => {
@@ -129,17 +120,16 @@ app.delete('/api/grades/:gradeId', (req, res, err) => {
                 error: "something went wrong querying the database"
               })
             })
-          break;
+          return;
         } else if (i === result.rows.length - 1) {
-          console.log('404')
           res.status(404).json({
             error: `gradeId ${gradeId} does not exist`
           })
           return;
         }
       }
-
     })
+
     .catch((err) => {
       res.status(500).json({
         error: "something went wrong querying the database"
