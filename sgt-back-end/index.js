@@ -27,7 +27,7 @@ app.get('/api/grades', (req, res) => {
 app.use(express.json())
 
 app.post('/api/grades', (req, res) => {
-  if(req.body.name === undefined || req.body.course === undefined || req.body.score === undefined
+  if(req.body.score % 1 !== 0 || req.body.name === undefined || req.body.course === undefined || req.body.score === undefined
     || req.body.score < 1 || req.body.score > 100 || !Number.isInteger(parseInt(req.body.score))) {
     res.status(400).json({
       error: 'Something is wrong with your request parameters'
@@ -52,7 +52,7 @@ app.post('/api/grades', (req, res) => {
 
 app.put('/api/grades/:gradeId', (req, res) => {
   const gradeId = parseInt(req.params.gradeId)
-  if (!Number.isInteger(gradeId) || gradeId <= 0 || req.body.name === undefined || req.body.course === undefined
+  if (gradeId % 1 !== 0 || req.body.score % 1 !== 0 || !Number.isInteger(gradeId) || gradeId <= 0 || req.body.name === undefined || req.body.course === undefined
     || req.body.score === undefined || req.body.score < 1 || req.body.score > 100 || !Number.isInteger(parseInt(req.body.score))) {
       res.status(400).json({
         error: 'Something is wrong with your request'
@@ -94,7 +94,7 @@ app.put('/api/grades/:gradeId', (req, res) => {
 
 app.delete('/api/grades/:gradeId', (req, res, err) => {
   const gradeId = parseInt(req.params.gradeId)
-  if (!Number.isInteger(gradeId) || gradeId <= 0) {
+  if (gradeId % 1 !== 0 || !Number.isInteger(gradeId) || gradeId <= 0) {
     res.status(400).json({
       error: 'Invalid gradeId, try a positive integer'
     })
